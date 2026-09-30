@@ -1,0 +1,43 @@
+# 正式配置。0 表示使用整个 split；修改实验条件后应建立新的运行目录。
+experiment:
+  name: qwen35_2b_open_jev
+  seed: 42
+  output_root: runs
+model:
+  id: Qwen/Qwen3.5-2B
+  revision: 15852e8c16360a2fea060d615a32b45270f8a8fc
+  dtype: bfloat16
+  max_length: 4096  # 包含完整 chat template、上下文、问题和候选。
+  lora_rank: 8
+  lora_alpha: 16
+  lora_dropout: 0.0
+  gradient_checkpointing: true
+  sort_candidates: false  # 原配置保留原候选顺序；优化配置按长度分块后还原顺序。
+data:
+  repo: ZefanCai/Open-Jev
+  revision: c67699e13d0ae25e35b77165a4b6b079bedc8aba
+  config: release-v2-redistributable
+  directory: data/release-v2-redistributable
+  train_limit: 0
+  validation_limit: 0
+  calibration_limit: 0
+  test_limit: 0
+  ood_limit: 0
+train:
+  epochs: 1
+  max_steps: 0  # 0 = 完成所有 epochs；正数 = 预先规定的总更新步数上限。
+  learning_rate: 0.00005
+  head_learning_rate: 0.0001
+  weight_decay: 0.01
+  batch_size: 1  # 一起前向/反向的决策数；不同候选数量仍按决策等权。
+  accumulation: 4  # 累积微批次数；有效 batch = batch_size × accumulation。
+  brier_weight: 0.1
+  grad_clip: 1.0
+  candidate_batch_size: 4  # 候选分块后重组 logits，再计算一个完整决策损失。
+  checkpoint_every: 500  # 单位：已完成的 optimizer 更新步。
+  eval_every: 5000  # validation 选模；每个 epoch 结束也会验证。
+  checkpoint_keep: 3
+  eval_keep: 3
+runtime:
+  device: cuda:0
+  deterministic: true  # 固定 CUDA 算法；同机续训对照，可能略慢。

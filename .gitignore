@@ -1,0 +1,53 @@
+# Environments and runtime caches
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+*.pyc
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Datasets, base models and experiment artifacts
+data/
+models/
+runs/
+cache/
+.verification-tmp/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+*.onnx
+*.gguf
+*.jsonl
+*.jsonl.gz
+*.parquet
+*.arrow
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.log
+
+# Local credentials and editor/OS files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.aws/
+.ssh/
+.idea/
+.vscode/
+.DS_Store
+
+# Local development records; publish README and third-party notices only
+/AGENTS.md
+/DEVLOG.md
+/docs/

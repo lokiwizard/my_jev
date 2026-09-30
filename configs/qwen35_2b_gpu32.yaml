@@ -1,0 +1,43 @@
+# 32 GiB GPU 的资源优化配置：决策微批按长度分组，保留梯度检查点。
+experiment:
+  name: qwen35_2b_gpu32
+  seed: 42
+  output_root: runs
+model:
+  id: Qwen/Qwen3.5-2B
+  revision: 15852e8c16360a2fea060d615a32b45270f8a8fc
+  dtype: bfloat16
+  max_length: 4096
+  lora_rank: 8
+  lora_alpha: 16
+  lora_dropout: 0.0
+  gradient_checkpointing: true  # 关闭检查点的组合已出现 OOM，保留此开关。
+  sort_candidates: true  # 微批内按长度分块；输出还原原决策/候选顺序。
+data:
+  repo: ZefanCai/Open-Jev
+  revision: c67699e13d0ae25e35b77165a4b6b079bedc8aba
+  config: release-v2-redistributable
+  directory: data/release-v2-redistributable
+  train_limit: 0
+  validation_limit: 0
+  calibration_limit: 0
+  test_limit: 0
+  ood_limit: 0
+train:
+  epochs: 1
+  max_steps: 0
+  learning_rate: 0.00005
+  head_learning_rate: 0.0001
+  weight_decay: 0.01
+  batch_size: 32  # 一起前向/反向的决策数；候选数可变。
+  accumulation: 1  # 有效 batch = 32 × 1；一轮共 2,473 次更新。
+  brier_weight: 0.1
+  grad_clip: 1.0
+  candidate_batch_size: 16  # 每次 backbone 前向最多 16 条独立候选序列。
+  checkpoint_every: 63  # 约每 2,016 条决策保存，接近原配置的 2,000 条。
+  eval_every: 625  # 每 20,000 条决策验证，保持原配置的样本间隔。
+  checkpoint_keep: 3
+  eval_keep: 3
+runtime:
+  device: cuda:0
+  deterministic: true

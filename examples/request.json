@@ -1,0 +1,23 @@
+{
+  "state": "订单被重复扣款，客户要求退还多扣的钱。",
+  "questions": {
+    "route": {
+      "type": "choice",
+      "instructions": "应该分给哪个处理团队？",
+      "criteria": {
+        "billing": "处理扣款、账单和退款",
+        "technical": "处理产品故障",
+        "account": "处理登录和账户权限"
+      }
+    },
+    "refund_requested": {
+      "type": "noul",
+      "instructions": "客户是否明确要求退还款项？"
+    },
+    "severity": {
+      "type": "score",
+      "instructions": "评价产品功能故障的严重程度。没有产品功能故障时选第一个等级。",
+      "criteria": ["没有功能故障", "功能出错，但存在替代方案", "功能被阻断，而且没有替代方案"]
+    }
+  }
+}
